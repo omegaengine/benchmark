@@ -101,6 +101,43 @@ def parse_zip_submission(user_name, game_version, stream):
 	submission.game_version = game_version
 	return submission
 
+def store_submission(submission):
+	def add(cursor, table, values):
+		#TODO
+		return 0
+
+	def add_or_get(cursor, table, values):
+		#TODO
+		return 0
+
+	def add_or_get_by_key(cursor, table, key, values):
+		#TODO
+		return 0
+
+	#import MySQLdb
+	#db = MySQLdb.connect('localhost', 'testuser', 'test123', 'betabenchmark');
+	#cursor = db.cursor()
+	cursor = None
+
+	os = submission.hardware.os
+	os_id = add_or_get(cursor, 'os', {'platform': os.platform, 'is64bit': os.is64bit, 'version': os.version, 'service_pack': os.service_pack})
+
+	cpu = submission.hardware.cpu
+	cpu_id = add_or_get(cursor, 'cpu', {'manufacturer': cpu.manufacturer, 'name': cpu.name, 'speed': cpu.speed, 'cores': cpu.cores, 'logical': cpu.logical})
+
+	gpu = submission.hardware.gpu	
+	gpu_manufacturer_id = add_or_get_by_key(cursor, 'gpu_manufacturer', {'id': gpu.manufacturer}, {'name': gpu.manufacturer}) # Default GPU manufacturer name to manufacturer ID
+	gpu_id = add_or_get(cursor, 'gpu', {'manufacturer_id': gpu_manufacturer_id, 'name': gpu.name, 'ram': gpu.ram, 'max_aa': gpu.max_aa})
+
+	submission_id = add(cursor, 'submission', {'user_name': submission.user_name, 'game_version': submission.game_version, 'os_id': os_id, 'cpu_id': cpu_id, 'ram': submission.hardware.ram.size, 'gpu_id': gpu_id, 'game_log': submission.game_log})
+
+	for test_case in submission.statistics.test_cases:
+		water_effects_id = add_or_get(cursor, 'water_effects', {'name': test_case.water_effects})
+		particle_system_quality_id = add_or_get(cursor, 'particle_system_quality', {'name': test_case.particle_system_quality})
+		test_case_id = add_or_get(cursor, 'test_case', {'target_name': test_case.target_name, 'high_res': test_case.high_res, 'anti_aliasing': test_case.anti_aliasing, 'screenshot': test_case.screenshot, 'graphics_settings_anisotropic': test_case.graphics_settings.anisotropic, 'graphics_settings_double_sampling': test_case.graphics_settings.double_sampling, 'graphics_settings_post_screen_effects': test_case.graphics_settings.post_screen_effects, 'water_effects_id': water_effects_id, 'particle_system_quality_id': particle_system_quality_id})
+
+		result = test_case.result
+		add(cursor, 'test_case_result', {'submission_id': submission_id, 'test_case_id': test_case_id, 'average_fps': result.average_fps, 'average_frame_ms': result.average_frame_ms, 'frame_log': result.frame_log, 'screenshot': result.screenshot})
+
 import sys
-submission = parse_zip_submission(sys.argv[1], sys.argv[2], open(sys.argv[3], 'rb'))
-# TODO: Store in database
+store_submission(parse_zip_submission(sys.argv[1], sys.argv[2], open(sys.argv[3], 'rb')))
