@@ -9,9 +9,9 @@
   <xs:complexType name="TestCase">
     <xs:sequence>
       <xs:element minOccurs="0" maxOccurs="1" name="Target" type="BenchmarkPoint" />
+      <xs:element minOccurs="1" maxOccurs="1" name="GraphicsSettings" type="TestGraphicsSettings" />
       <xs:element minOccurs="1" maxOccurs="1" name="WaterEffects" type="WaterEffectsType" />
       <xs:element minOccurs="1" maxOccurs="1" name="ParticleSystemQuality" type="Quality" />
-      <xs:element minOccurs="1" maxOccurs="1" name="GraphicsSettings" type="TestGraphicsSettings" />
     </xs:sequence>
     <xs:attribute name="high-res" type="xs:boolean" use="required" />
     <xs:attribute name="anti-aliasing" type="xs:boolean" use="required" />

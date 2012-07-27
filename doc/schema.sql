@@ -76,14 +76,14 @@ CREATE TABLE test_case
 (
 	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	target_name VARCHAR(255) NOT NULL, -- name of the object target in the scene, e.g. House1
-	water_effects_id INT NOT NULL,
-	particle_system_quality_id INT NOT NULL,
-	graphics_settings_anisotropic BOOLEAN NOT NULL, -- was anisotropic filtering on?
-	graphics_settings_double_sampling BOOLEAN NOT NULL, -- was double sampling on?
-	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on on?
 	high_res BOOLEAN NOT NULL, -- was the scene rendered with high resolution?
 	anti_aliasing BOOLEAN NOT NULL, -- was the scene rendered with anti aliasing?
 	screenshot BOOLEAN NOT NULL, -- was a screenshot created?
+	graphics_settings_anisotropic BOOLEAN NOT NULL, -- was anisotropic filtering on?
+	graphics_settings_double_sampling BOOLEAN NOT NULL, -- was double sampling on?
+	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on on?
+	water_effects_id INT NOT NULL,
+	particle_system_quality_id INT NOT NULL,
 	FOREIGN KEY (water_effects_id) REFERENCES water_effects(id),
 	FOREIGN KEY (particle_system_quality_id) REFERENCES particle_system_quality(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
