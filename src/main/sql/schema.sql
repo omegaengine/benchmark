@@ -26,9 +26,10 @@ CREATE TABLE cpu
 	CONSTRAINT deduplicate UNIQUE (manufacturer, name, speed, cores, logical)
 ) CHARSET=utf8 ENGINE=InnoDB;
 
-CREATE TABLE gpu_manufacturer (
+CREATE TABLE gpu_manufacturer
+(
 	id INT PRIMARY KEY, -- DirectX graphics card manufacturer ID, e.g. 4318 for NVidia
-	name varchar(255) NOT NULL UNIQUE -- graphics card manufacturer name
+	name varchar(255) NOT NULL -- graphics card manufacturer name
 ) CHARSET=utf8 ENGINE=InnoDB;
 
 CREATE TABLE gpu 
