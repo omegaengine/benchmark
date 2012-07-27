@@ -45,8 +45,8 @@ CREATE TABLE gpu
 CREATE TABLE submission
 (
 	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-	user_name VARCHAR(128) NOT NULL, -- the name of the user that submitted these benchmark test_case_results
 	submission_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	user_name VARCHAR(128) NOT NULL, -- the name of the user that submitted these benchmark test_case_results
 	game_version VARCHAR(5) NOT NULL, -- version number of the game, e.g. 0.5.0
 	os_id INT UNSIGNED NOT NULL,
 	cpu_id INT UNSIGNED NOT NULL,
@@ -100,4 +100,3 @@ CREATE TABLE test_case_result
 	FOREIGN KEY (submission_id) REFERENCES submission(id) ON DELETE CASCADE,
 	FOREIGN KEY (test_case_id) REFERENCES test_case(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
-

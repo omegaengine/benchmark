@@ -1,6 +1,6 @@
 -- Show all submissions
 SELECT
-submission.user_name, submission.submission_time, submission.game_version,
+submission.submission_time, submission.user_name, submission.game_version,
 os.platform as os_platform, os.is64bit as os_is64bit, os.version as os_version, os.service_pack as os_service_pack,
 cpu.manufacturer as cpu_manufacturer, cpu.name as cpu_name, cpu.speed as cpu_speed, cpu.cores as cpu_cores, cpu.logical as cpu_logical,
 submission.ram,
@@ -16,7 +16,7 @@ FROM (water_effects, particle_system_quality) JOIN test_case ON (test_case.water
 
 -- Show all test case results
 SELECT
-submission.user_name, submission.submission_time, submission.game_version,
+submission.submission_time, submission.user_name, submission.game_version,
 os.platform as os_platform, os.is64bit as os_is64bit, os.version as os_version, os.service_pack as os_service_pack,
 cpu.manufacturer as cpu_manufacturer, cpu.name as cpu_name, cpu.speed as cpu_speed, cpu.cores as cpu_cores, cpu.logical as cpu_logical,
 submission.ram,
