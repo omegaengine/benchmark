@@ -1,6 +1,6 @@
--- DROP DATABASE omegaengine_benchmark;
--- CREATE DATABASE omegaengine_benchmark CHARACTER SET utf8;
--- USE omegaengine_benchmark;
+DROP DATABASE betabenchmark;
+CREATE DATABASE betabenchmark CHARACTER SET utf8;
+USE betabenchmark;
 
 
 -- Hardware --
@@ -11,7 +11,8 @@ CREATE TABLE os
 	platform VARCHAR(255) NOT NULL, -- operating system family, e.g. Win32NT
 	is64bit BOOLEAN NOT NULL, -- 64bit operating system yes/no
 	version VARCHAR(255) NOT NULL, -- internal operating system version number, e.g. 6.1 for Windows 7
-	service_pack VARCHAR(255) NOT NULL -- service pack, e.g. Service Pack 1
+	service_pack VARCHAR(255) NOT NULL, -- service pack, e.g. Service Pack 1
+	CONSTRAINT deduplicate UNIQUE (platform, is64bit, version, service_pack)
 ) CHARSET=utf8 ENGINE=InnoDB;
 
 CREATE TABLE cpu 
@@ -21,12 +22,13 @@ CREATE TABLE cpu
 	name VARCHAR(255) NOT NULL, -- CPU full name, e.g. "Intel(R) Core(TM)2 Duo CPU     P8400  @ 2.26GHz"
 	speed INT UNSIGNED NOT NULL, -- CPU speed in MHz
 	cores INT UNSIGNED NOT NULL, -- number of CPU cores
-	logical INT UNSIGNED NOT NULL -- number of logical threads
+	logical INT UNSIGNED NOT NULL, -- number of logical threads
+	CONSTRAINT deduplicate UNIQUE (manufacturer, name, speed, cores, logical)
 ) CHARSET=utf8 ENGINE=InnoDB;
 
 CREATE TABLE gpu_manufacturer (
-  id INT PRIMARY KEY, -- DirectX graphics card manufacturer ID, e.g. 4318 for NVidia
-  name varchar(255) NOT NULL -- graphics card manufacturer name
+	id INT PRIMARY KEY, -- DirectX graphics card manufacturer ID, e.g. 4318 for NVidia
+	name varchar(255) NOT NULL UNIQUE -- graphics card manufacturer name
 ) CHARSET=utf8 ENGINE=InnoDB;
 
 CREATE TABLE gpu 
@@ -36,6 +38,7 @@ CREATE TABLE gpu
 	name VARCHAR(255) NOT NULL, -- graphics card name, e.g. NVIDIA GeForce 9200M GS
 	ram INT UNSIGNED NOT NULL, -- graphics card RAM size in MB
 	max_aa INT UNSIGNED NOT NULL, -- maximum anti-aliasing level
+	CONSTRAINT deduplicate UNIQUE (manufacturer_id, name, ram, max_aa),
 	FOREIGN KEY (manufacturer_id) REFERENCES gpu_manufacturer(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
 
@@ -61,14 +64,14 @@ CREATE TABLE submission
 CREATE TABLE water_effects
 (
 	id INT PRIMARY KEY,
-	name VARCHAR(255) NOT NULL
+	name VARCHAR(255) NOT NULL UNIQUE
 ) CHARSET=utf8 ENGINE=InnoDB;
 INSERT INTO water_effects VALUES (0, 'None'), (1, 'RefractionOnly'), (2, 'ReflectTerrain'), (3, 'ReflectAll');
 
 CREATE TABLE particle_system_quality
 (
 	id INT PRIMARY KEY,
-	name VARCHAR(255) NOT NULL
+	name VARCHAR(255) NOT NULL UNIQUE
 ) CHARSET=utf8 ENGINE=InnoDB;
 INSERT INTO particle_system_quality VALUES (0, 'Low'), (1, 'Medium'), (2, 'High');
 
@@ -84,6 +87,7 @@ CREATE TABLE test_case
 	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on on?
 	water_effects_id INT NOT NULL,
 	particle_system_quality_id INT NOT NULL,
+	CONSTRAINT deduplicate UNIQUE (target_name, high_res, anti_aliasing, screenshot, graphics_settings_anisotropic, graphics_settings_double_sampling, graphics_settings_post_screen_effects, water_effects_id, particle_system_quality_id),
 	FOREIGN KEY (water_effects_id) REFERENCES water_effects(id),
 	FOREIGN KEY (particle_system_quality_id) REFERENCES particle_system_quality(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
