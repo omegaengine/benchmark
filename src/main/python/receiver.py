@@ -5,12 +5,13 @@ Reads the contents of a ZIP archive as a OmegaEngine benchmark submission.
 class Data:
 	pass
 
+
 def parse_submission(stream):
 	def parse_hardware(zip):
 		def parse_os(element):
 			os = Data()
 			os.platform = element.attrib['platform']
-			os.is64bit = 1 if element.attrib['is64bit'] == "true" else 0
+			os.is64bit = (element.attrib['is64bit'] == "true")
 			os.version = element.attrib['version']
 			os.service_pack = element.attrib['service-pack']
 			return os
@@ -52,16 +53,16 @@ def parse_submission(stream):
 			def parse_graphics_settings(element):
 				text = element.text or ''
 				graphics_settings = Data()
-				graphics_settings.anisotropic = 1 if 'anisotropic' in text else 0
-				graphics_settings.double_sampling = 1 if 'double_sampling' in text else 0
-				graphics_settings.post_screen_effects = 1 if 'post_screen_effects' in text else 0
+				graphics_settings.anisotropic = ('anisotropic' in text)
+				graphics_settings.double_sampling = ('double_sampling' in text)
+				graphics_settings.post_screen_effects = ('post_screen_effects' in text)
 				return graphics_settings
 
 			test_case = Data()
 			test_case.target_name = element.find('Target').attrib['Name']
-			test_case.high_res = 1 if element.attrib['high-res'] == "true" else 0
-			test_case.anti_aliasing = 1 if element.attrib['anti-aliasing'] == "true" else 0
-			test_case.screenshot = 1 if element.attrib['screenshot'] == "true" else 0
+			test_case.high_res = (element.attrib['high-res'] == "true")
+			test_case.anti_aliasing = (element.attrib['anti-aliasing'] == "true")
+			test_case.screenshot = (element.attrib['screenshot'] == "true")
 			test_case.graphics_settings = parse_graphics_settings(element.find('GraphicsSettings'))
 			test_case.water_effects = element.find('WaterEffects').text
 			test_case.particle_system_quality = element.find('ParticleSystemQuality').text
@@ -81,7 +82,7 @@ def parse_submission(stream):
 		for i, element in enumerate(root.findall('test-case')):
 			test_case = parse_test_case(element)
 			test_case.result.frame_log = zip.open('test-case' + str(i) + '.xml').read()
-			test_case.result.screenshot = zip.open('test-case' + str(i) + '.jpg').read() if test_case.screenshot == "true" else None
+			test_case.result.screenshot = zip.open('test-case' + str(i) + '.jpg').read() if test_case.screenshot else None
 			statistics.test_cases.append(test_case)
 		return statistics
 
