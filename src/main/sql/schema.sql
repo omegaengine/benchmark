@@ -51,7 +51,8 @@ CREATE TABLE submission
 	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	submission_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	user_name VARCHAR(128) NOT NULL, -- the name of the user that submitted these benchmark test_case_results
-	game_version VARCHAR(5) NOT NULL, -- version number of the game, e.g. 0.5.0
+	game_version VARCHAR(5) NOT NULL, -- version number of the game, e.g. 1.0.0
+	engine_version VARCHAR(5) NOT NULL, -- version number of the engine, e.g. 1.0.0
 	os_id INT UNSIGNED NOT NULL,
 	cpu_id INT UNSIGNED NOT NULL,
 	ram INT UNSIGNED NOT NULL, -- system RAM size in MB
@@ -82,13 +83,12 @@ CREATE TABLE test_case
 	target_name VARCHAR(255) NOT NULL, -- name of the object target in the scene, e.g. House1
 	high_res BOOLEAN NOT NULL, -- was the scene rendered with high resolution?
 	anti_aliasing BOOLEAN NOT NULL, -- was the scene rendered with anti aliasing?
-	screenshot BOOLEAN NOT NULL, -- was a screenshot created?
 	graphics_settings_anisotropic BOOLEAN NOT NULL, -- was anisotropic filtering on?
 	graphics_settings_double_sampling BOOLEAN NOT NULL, -- was double sampling on?
 	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on on?
 	water_effects_id INT NOT NULL,
 	particle_system_quality_id INT NOT NULL,
-	CONSTRAINT deduplicate UNIQUE (target_name, high_res, anti_aliasing, screenshot, graphics_settings_anisotropic, graphics_settings_double_sampling, graphics_settings_post_screen_effects, water_effects_id, particle_system_quality_id),
+	CONSTRAINT deduplicate UNIQUE (target_name, high_res, anti_aliasing, graphics_settings_anisotropic, graphics_settings_double_sampling, graphics_settings_post_screen_effects, water_effects_id, particle_system_quality_id),
 	FOREIGN KEY (water_effects_id) REFERENCES water_effects(id),
 	FOREIGN KEY (particle_system_quality_id) REFERENCES particle_system_quality(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
