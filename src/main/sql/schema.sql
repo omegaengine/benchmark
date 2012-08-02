@@ -57,7 +57,7 @@ CREATE TABLE submission
 	cpu_id INT UNSIGNED NOT NULL,
 	ram INT UNSIGNED NOT NULL, -- system RAM size in MB
 	gpu_id INT UNSIGNED NOT NULL,
-	game_log BLOB, -- content of the log.txt file
+	game_log TEXT, -- content of the log.txt file
 	FOREIGN KEY (os_id) REFERENCES os(id),
 	FOREIGN KEY (cpu_id) REFERENCES cpu(id),
 	FOREIGN KEY (gpu_id) REFERENCES gpu(id)
@@ -100,8 +100,8 @@ CREATE TABLE test_case_result
 	test_case_id INT UNSIGNED NOT NULL,
 	average_fps FLOAT UNSIGNED NOT NULL, -- average number of frames that were rendered per second
 	average_frame_ms FLOAT UNSIGNED NOT NULL, -- average number of milliseconds a frame took to render
-	frame_log BLOB, -- content of the test-case##.xml file
-	screenshot BLOB, -- content of the test-case##.jpg file
+	frame_log TEXT, -- content of the test-case##.xml file
+	screenshot BLOB(524288), -- content of the test-case##.jpg file
 	FOREIGN KEY (submission_id) REFERENCES submission(id) ON DELETE CASCADE,
 	FOREIGN KEY (test_case_id) REFERENCES test_case(id)
 ) CHARSET=utf8 ENGINE=InnoDB;
