@@ -10,7 +10,7 @@ def parse_submission(stream):
 		def parse_os(element):
 			os = Data()
 			os.platform = element.attrib['platform']
-			os.is64bit = element.attrib['is64bit']
+			os.is64bit = 1 if element.attrib['is64bit'] == "true" else 0
 			os.version = element.attrib['version']
 			os.service_pack = element.attrib['service-pack']
 			return os
@@ -52,16 +52,16 @@ def parse_submission(stream):
 			def parse_graphics_settings(element):
 				text = element.text or ''
 				graphics_settings = Data()
-				graphics_settings.anisotropic = 'anisotropic' in text
-				graphics_settings.double_sampling = 'double_sampling' in text
-				graphics_settings.post_screen_effects = 'post_screen_effects' in text
+				graphics_settings.anisotropic = 1 if 'anisotropic' in text else 0
+				graphics_settings.double_sampling = 1 if 'double_sampling' in text else 0
+				graphics_settings.post_screen_effects = 1 if 'post_screen_effects' in text else 0
 				return graphics_settings
 
 			test_case = Data()
 			test_case.target_name = element.find('Target').attrib['Name']
-			test_case.high_res = element.attrib['high-res']
-			test_case.anti_aliasing = element.attrib['anti-aliasing']
-			test_case.screenshot = element.attrib['screenshot']
+			test_case.high_res = 1 if element.attrib['high-res'] == "true" else 0
+			test_case.anti_aliasing = 1 if element.attrib['anti-aliasing'] == "true" else 0
+			test_case.screenshot = 1 if element.attrib['screenshot'] == "true" else 0
 			test_case.graphics_settings = parse_graphics_settings(element.find('GraphicsSettings'))
 			test_case.water_effects = element.find('WaterEffects').text
 			test_case.particle_system_quality = element.find('ParticleSystemQuality').text
@@ -94,9 +94,12 @@ def parse_submission(stream):
 	submission.game_log = zip.open('log.txt').read()
 	return submission
 
-def store_submission(submission):
+
+def store_submission(submission, db):
 	def _dict_value_pad(key):
 		return '%(' + str(key) + ')s'
+	def _dict_value_pair(key):
+		return str(key) + ' = %(' + str(key) + ')s'
 
 	def add(cursor, table, dict):
 		sql = 'INSERT INTO ' + table + ' ('
@@ -104,20 +107,20 @@ def store_submission(submission):
 		sql += ') VALUES ('
 		sql += ', '.join(map(_dict_value_pad, dict))
 		sql += ');'
-		#cursor.execute(sql, dict)
+		cursor.execute(sql, dict)
+		return cursor.lastrowid
 
 	def add_or_get(cursor, table, dict):
-		#TODO
-		return 0
+		try:
+			return add(cursor, table, dict)
+		except:
+			sql = 'SELECT id FROM ' + table + ' WHERE '
+			sql += ' AND '.join(map(_dict_value_pair, dict))
+			sql += ';'
+			cursor.execute(sql, dict)
+			return cursor.fetchone()[0]
 
-	def add_or_get_by_key(cursor, table, key, dict):
-		#TODO
-		return 0
-
-	#import MySQLdb
-	#db = MySQLdb.connect('localhost', 'testuser', 'test123', 'betabenchmark');
-	#cursor = db.cursor()
-	cursor = None
+	cursor = db.cursor()
 
 	os = submission.hardware.os
 	os_id = add_or_get(cursor, 'os', dict(platform=os.platform, is64bit=os.is64bit, version=os.version, service_pack=os.service_pack))
@@ -125,21 +128,31 @@ def store_submission(submission):
 	cpu = submission.hardware.cpu
 	cpu_id = add_or_get(cursor, 'cpu', dict(manufacturer=cpu.manufacturer, name=cpu.name, speed=cpu.speed, cores=cpu.cores, logical=cpu.logical))
 
-	gpu = submission.hardware.gpu	
-	gpu_manufacturer_id = add_or_get_by_key(cursor, 'gpu_manufacturer', ('id', gpu.manufacturer), dict(name=gpu.manufacturer)) # Default GPU manufacturer name to manufacturer ID
-	gpu_id = add_or_get(cursor, 'gpu', dict(manufacturer_id=gpu_manufacturer_id, name=gpu.name, ram=gpu.ram, max_aa=gpu.max_aa))
+	gpu = submission.hardware.gpu
+	try:
+		add(cursor, 'gpu_manufacturer', dict(id=gpu.manufacturer, name=gpu.manufacturer)) # Default GPU manufacturer name to manufacturer ID
+	except:
+		pass # If the ID is already in the database just keep that entry (name might have already been set manually)
+	gpu_id = add_or_get(cursor, 'gpu', dict(manufacturer_id=gpu.manufacturer, name=gpu.name, ram=gpu.ram, max_aa=gpu.max_aa))
 
 	statistics = submission.statistics
 	submission_id = add(cursor, 'submission', dict(user_name=submission.user_name, game_version=statistics.game_version, engine_version=statistics.engine_version, os_id=os_id, cpu_id=cpu_id, ram=submission.hardware.ram.size, gpu_id=gpu_id, game_log=submission.game_log))
 	for test_case in statistics.test_cases:
 		water_effects_id = add_or_get(cursor, 'water_effects', dict(name=test_case.water_effects))
 		particle_system_quality_id = add_or_get(cursor, 'particle_system_quality', dict(name=test_case.particle_system_quality))
-		test_case_id = add_or_get(cursor, 'test_case', dict(target_name=test_case.target_name, high_res=test_case.high_res, anti_aliasing=test_case.anti_aliasing, screenshot=test_case.screenshot, graphics_settings_anisotropic=test_case.graphics_settings.anisotropic, graphics_settings_double_sampling=test_case.graphics_settings.double_sampling, graphics_settings_post_screen_effects=test_case.graphics_settings.post_screen_effects, water_effects_id=water_effects_id, particle_system_quality_id=particle_system_quality_id))
+		test_case_id = add_or_get(cursor, 'test_case', dict(target_name=test_case.target_name, high_res=test_case.high_res, anti_aliasing=test_case.anti_aliasing, graphics_settings_anisotropic=test_case.graphics_settings.anisotropic, graphics_settings_double_sampling=test_case.graphics_settings.double_sampling, graphics_settings_post_screen_effects=test_case.graphics_settings.post_screen_effects, water_effects_id=water_effects_id, particle_system_quality_id=particle_system_quality_id))
 
 		result = test_case.result
 		add(cursor, 'test_case_result', dict(submission_id=submission_id, test_case_id=test_case_id, average_fps=result.average_fps, average_frame_ms=result.average_frame_ms, frame_log=result.frame_log, screenshot=result.screenshot))
 
+	db.commit()
+
+
 import sys
 submission = parse_submission(open(sys.argv[2], 'rb'))
 submission.user_name = sys.argv[1]
-store_submission(submission)
+
+import MySQLdb
+#Configuration:      Host,        Username,        Password,        Database
+db = MySQLdb.connect('localhost', 'betabenchmark', 'betabenchmark', 'betabenchmark')
+store_submission(submission, db)
