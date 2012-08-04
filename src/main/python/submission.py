@@ -2,11 +2,12 @@
 Reads the contents of a ZIP archive as a OmegaEngine benchmark submission.
 """
 
+# Dummy class, fields are added dynamically
 class Data:
 	pass
 
 
-def parse_submission(stream):
+def parse_submission(user_name, stream):
 	def parse_hardware(zip):
 		def parse_os(element):
 			os = Data()
@@ -86,13 +87,15 @@ def parse_submission(stream):
 			statistics.test_cases.append(test_case)
 		return statistics
 
+	submission = Data()
+	submission.user_name = user_name
+
 	import zipfile
 	zip = zipfile.ZipFile(stream)
-
-	submission = Data()
 	submission.hardware = parse_hardware(zip)
 	submission.statistics = parse_statistics(zip)
 	submission.game_log = zip.open('log.txt').read()
+
 	return submission
 
 
@@ -147,13 +150,3 @@ def store_submission(submission, db):
 		add(cursor, 'test_case_result', dict(submission_id=submission_id, test_case_id=test_case_id, average_fps=result.average_fps, average_frame_ms=result.average_frame_ms, frame_log=result.frame_log, screenshot=result.screenshot))
 
 	db.commit()
-
-
-import sys
-submission = parse_submission(open(sys.argv[2], 'rb'))
-submission.user_name = sys.argv[1]
-
-import MySQLdb
-#Configuration:      Host,        Username,        Password,        Database
-db = MySQLdb.connect('localhost', 'betabenchmark', 'betabenchmark', 'betabenchmark')
-store_submission(submission, db)

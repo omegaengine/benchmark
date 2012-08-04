@@ -1,0 +1,13 @@
+# Handle command-line arguments
+import sys
+user_name = sys.argv[1]
+stream = open(sys.argv[2], 'rb')
+
+# Connect to the database
+import MySQLdb
+#Configuration:      Host,        Username,        Password,        Database
+db = MySQLdb.connect('localhost', 'betabenchmark', 'betabenchmark', 'betabenchmark')
+
+# Parse and store the data
+import submission
+store_submission(parse_submission(user_name, stream), db)
