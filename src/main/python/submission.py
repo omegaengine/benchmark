@@ -112,7 +112,24 @@ def store(submission, db):
 	def _dict_value_pair(key):
 		return str(key) + ' = %(' + str(key) + ')s'
 
+	def get(cursor, table, dict):
+		"""Trys to find the ID of an existing database table entry.
+		@param cursor: the cursor used to access the database
+		@param table: the name of the table to read from
+		@param dict: the key-value pairs to search for
+		@return: the ID of the existing entry or None"""
+		sql = 'SELECT id FROM ' + table + ' WHERE '
+		sql += ' AND '.join(map(_dict_value_pair, dict))
+		sql += ' LIMIT 1;'
+		cursor.execute(sql, dict)
+		return cursor.fetchone()[0] if cursor.rowcount > 0 else None
+
 	def add(cursor, table, dict):
+		"""Adds a new database table entry.
+		@param cursor: the cursor used to access the database
+		@param table: the name of the table to write to
+		@param dict: the key-value pairs to write
+		@return: the ID of the newly created entry"""
 		sql = 'INSERT INTO ' + table + ' ('
 		sql += ', '.join(dict)
 		sql += ') VALUES ('
@@ -121,37 +138,41 @@ def store(submission, db):
 		cursor.execute(sql, dict)
 		return cursor.lastrowid
 
-	def add_or_get(cursor, table, dict):
-		try:
-			return add(cursor, table, dict)
-		except:
-			sql = 'SELECT id FROM ' + table + ' WHERE '
-			sql += ' AND '.join(map(_dict_value_pair, dict))
-			sql += ';'
-			cursor.execute(sql, dict)
-			return cursor.fetchone()[0]
+	def get_or_add(cursor, table, dict):
+		"""Trys to find the ID of an existing database table entry and adds it if it is missing.
+		@param cursor: the cursor used to access the database
+		@param table: the name of the table to read from and write to
+		@param dict: the key-value pairs to search for or write
+		@return: the ID of the existing or the newly created entry"""
+		result = get(cursor, table, dict)	# Try to find exisiting
+		if result is None:
+			try:
+				result = add(cursor, table, dict) # Try to add new
+			except:
+				result = get(cursor, table, dict) # Handle race condition
+		return result
 
 	cursor = db.cursor()
 
 	os = submission.hardware.os
-	os_id = add_or_get(cursor, 'os', dict(platform=os.platform, is64bit=os.is64bit, version=os.version, service_pack=os.service_pack))
+	os_id = get_or_add(cursor, 'os', dict(platform=os.platform, is64bit=os.is64bit, version=os.version, service_pack=os.service_pack))
 
 	cpu = submission.hardware.cpu
-	cpu_id = add_or_get(cursor, 'cpu', dict(manufacturer=cpu.manufacturer, name=cpu.name, speed=cpu.speed, cores=cpu.cores, logical=cpu.logical))
+	cpu_id = get_or_add(cursor, 'cpu', dict(manufacturer=cpu.manufacturer, name=cpu.name, speed=cpu.speed, cores=cpu.cores, logical=cpu.logical))
 
 	gpu = submission.hardware.gpu
 	try:
-		add(cursor, 'gpu_manufacturer', dict(id=gpu.manufacturer, name=gpu.manufacturer)) # Default GPU manufacturer name to manufacturer ID
+		add(cursor, 'gpu_manufacturer', dict(id=gpu.manufacturer, name='Manufacturer #' + str(gpu.manufacturer)))
 	except:
 		pass # If the ID is already in the database just keep that entry (name might have already been set manually)
-	gpu_id = add_or_get(cursor, 'gpu', dict(manufacturer_id=gpu.manufacturer, name=gpu.name, ram=gpu.ram, max_aa=gpu.max_aa))
+	gpu_id = get_or_add(cursor, 'gpu', dict(manufacturer_id=gpu.manufacturer, name=gpu.name, ram=gpu.ram, max_aa=gpu.max_aa))
 
 	statistics = submission.statistics
 	submission_id = add(cursor, 'submission', dict(user_name=submission.user_name, game_version=statistics.game_version, engine_version=statistics.engine_version, os_id=os_id, cpu_id=cpu_id, ram=submission.hardware.ram.size, gpu_id=gpu_id, game_log=submission.game_log))
 	for test_case in statistics.test_cases:
-		water_effects_id = add_or_get(cursor, 'water_effects', dict(name=test_case.water_effects))
-		particle_system_quality_id = add_or_get(cursor, 'particle_system_quality', dict(name=test_case.particle_system_quality))
-		test_case_id = add_or_get(cursor, 'test_case', dict(target_name=test_case.target_name, high_res=test_case.high_res, anti_aliasing=test_case.anti_aliasing, graphics_settings_anisotropic=test_case.graphics_settings.anisotropic, graphics_settings_double_sampling=test_case.graphics_settings.double_sampling, graphics_settings_post_screen_effects=test_case.graphics_settings.post_screen_effects, water_effects_id=water_effects_id, particle_system_quality_id=particle_system_quality_id))
+		water_effects_id = get_or_add(cursor, 'water_effects', dict(name=test_case.water_effects))
+		particle_system_quality_id = get_or_add(cursor, 'particle_system_quality', dict(name=test_case.particle_system_quality))
+		test_case_id = get_or_add(cursor, 'test_case', dict(target_name=test_case.target_name, high_res=test_case.high_res, anti_aliasing=test_case.anti_aliasing, graphics_settings_anisotropic=test_case.graphics_settings.anisotropic, graphics_settings_double_sampling=test_case.graphics_settings.double_sampling, graphics_settings_post_screen_effects=test_case.graphics_settings.post_screen_effects, water_effects_id=water_effects_id, particle_system_quality_id=particle_system_quality_id))
 
 		result = test_case.result
 		add(cursor, 'test_case_result', dict(submission_id=submission_id, test_case_id=test_case_id, average_fps=result.average_fps, average_frame_ms=result.average_frame_ms, frame_log=result.frame_log, screenshot=result.screenshot))
