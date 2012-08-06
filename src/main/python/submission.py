@@ -1,5 +1,5 @@
 """
-Reads the contents of a ZIP archive as a OmegaEngine benchmark submission.
+Handles ZIP archives as a OmegaEngine benchmark submission.
 """
 
 # Dummy class, fields are added dynamically
@@ -7,7 +7,11 @@ class Data:
 	pass
 
 
-def parse_submission(user_name, stream):
+def parse(user_name, stream):
+	"""Parses a ZIP archive as a benchmark submission.
+	@param user_name: the name of the user that submitted the data
+	@param stream: a file-like object containing the ZIP data
+	@return: the parsed benchmark data structure"""
 	def parse_hardware(zip):
 		def parse_os(element):
 			os = Data()
@@ -99,7 +103,10 @@ def parse_submission(user_name, stream):
 	return submission
 
 
-def store_submission(submission, db):
+def store(submission, db):
+	"""Stores a benchmark submission in a database.
+	@param submission: the parsed benchmark data structure
+	@param db: the database to store the data in"""
 	def _dict_value_pad(key):
 		return '%(' + str(key) + ')s'
 	def _dict_value_pair(key):
