@@ -12,7 +12,7 @@ def application(environ, start_response):
 		# Parse and store data received via CGI
 		import cgi, submission
 		data = cgi.FieldStorage(fp=environ['wsgi.input'], environ=environ)
-		submission.store(submission.parse(data['user-name'].value, data['file'].file), db_connect())
+		submission.store(game_name=submission.parse(data['game'].value, user_name=data['user'].value, stream=data['file'].file), db_connect())
 
 		# Send HTTP response
 		start_response('200 OK', [('Content-Type', 'text/html')])

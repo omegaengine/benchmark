@@ -7,8 +7,9 @@ class Data:
 	pass
 
 
-def parse(user_name, stream):
+def parse(game_name, user_name, stream):
 	"""Parses a ZIP archive as a benchmark submission.
+	@param game_name: the name of the game that generated the data
 	@param user_name: the name of the user that submitted the data
 	@param stream: a file-like object containing the ZIP data
 	@return: the parsed benchmark data structure"""
@@ -53,7 +54,7 @@ def parse(user_name, stream):
 		hardware.gpu = parse_gpu(root.find('gpu'))
 		return hardware
 
-	def parse_statistics(zip):
+	def parse_statistics(zip, game_name):
 		def parse_test_case(element):
 			def parse_graphics_settings(element):
 				text = element.text or ''
@@ -80,8 +81,11 @@ def parse(user_name, stream):
 		root = xml.parse(zip.open('statistics.xml')).getroot()
 
 		statistics = Data()
-		statistics.game_version = root.attrib['game-version']
-		statistics.engine_version = root.attrib['engine-version']
+
+		statistics.game = Data()
+		statistics.game.name = game_name
+		statistics.game.version = root.attrib['game-version']
+		statistics.game.engine_version = root.attrib['engine-version']
 
 		statistics.test_cases = []
 		for i, element in enumerate(root.findall('test-case')):
@@ -92,12 +96,14 @@ def parse(user_name, stream):
 		return statistics
 
 	submission = Data()
-	submission.user_name = user_name
+
+	submission.user = Data()
+	submission.user.name = user_name
 
 	import zipfile
 	zip = zipfile.ZipFile(stream)
 	submission.hardware = parse_hardware(zip)
-	submission.statistics = parse_statistics(zip)
+	submission.statistics = parse_statistics(zip, game_name)
 	submission.game_log = zip.open('log.txt').read()
 
 	return submission
@@ -153,6 +159,12 @@ def store(submission, db):
 
 	cursor = db.cursor()
 
+	user = submission.user
+	user_id = get_or_add(cursor, 'user', dict(name=user.name))
+
+	game = submission.statistics.game
+	game_id = get_or_add(cursor, 'game', dict(name=game.name, version=game.version, engine_version=game.engine_version))
+
 	os = submission.hardware.os
 	os_id = get_or_add(cursor, 'os', dict(platform=os.platform, is64bit=os.is64bit, version=os.version, service_pack=os.service_pack))
 
@@ -164,7 +176,7 @@ def store(submission, db):
 	gpu_id = get_or_add(cursor, 'gpu', dict(manufacturer_id=gpu.manufacturer, name=gpu.name, ram=gpu.ram, max_aa=gpu.max_aa))
 
 	statistics = submission.statistics
-	submission_id = add(cursor, 'submission', dict(user_name=submission.user_name, game_version=statistics.game_version, engine_version=statistics.engine_version, os_id=os_id, cpu_id=cpu_id, ram=submission.hardware.ram.size, gpu_id=gpu_id, game_log=submission.game_log))
+	submission_id = add(cursor, 'submission', dict(user_id=user_id, game_id=game_id, os_id=os_id, cpu_id=cpu_id, ram=submission.hardware.ram.size, gpu_id=gpu_id, game_log=submission.game_log))
 	for test_case in statistics.test_cases:
 		water_effects_id = get_or_add(cursor, 'water_effects', dict(name=test_case.water_effects))
 		particle_system_quality_id = get_or_add(cursor, 'particle_system_quality', dict(name=test_case.particle_system_quality))
