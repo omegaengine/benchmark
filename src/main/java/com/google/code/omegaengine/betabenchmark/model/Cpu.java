@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -24,14 +22,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "cpu", catalog = "betabenchmark", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"manufacturer", "name", "speed", "cores", "logical"})})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Cpu.findAll", query = "SELECT c FROM Cpu c"),
-    @NamedQuery(name = "Cpu.findById", query = "SELECT c FROM Cpu c WHERE c.id = :id"),
-    @NamedQuery(name = "Cpu.findByManufacturer", query = "SELECT c FROM Cpu c WHERE c.manufacturer = :manufacturer"),
-    @NamedQuery(name = "Cpu.findByName", query = "SELECT c FROM Cpu c WHERE c.name = :name"),
-    @NamedQuery(name = "Cpu.findBySpeed", query = "SELECT c FROM Cpu c WHERE c.speed = :speed"),
-    @NamedQuery(name = "Cpu.findByCores", query = "SELECT c FROM Cpu c WHERE c.cores = :cores"),
-    @NamedQuery(name = "Cpu.findByLogical", query = "SELECT c FROM Cpu c WHERE c.logical = :logical")})
 public class Cpu implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,7 +53,7 @@ public class Cpu implements Serializable {
     @Column(nullable = false)
     private int logical;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cpu", fetch = FetchType.LAZY)
-    private Collection<Submission> submissionCollection;
+    private Collection<Submission> submissions;
 
     public Cpu() {
     }
@@ -130,12 +120,12 @@ public class Cpu implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Submission> getSubmissionCollection() {
-        return submissionCollection;
+    public Collection<Submission> getSubmissions() {
+        return submissions;
     }
 
-    public void setSubmissionCollection(Collection<Submission> submissionCollection) {
-        this.submissionCollection = submissionCollection;
+    public void setSubmissions(Collection<Submission> submissions) {
+        this.submissions = submissions;
     }
 
     @Override
@@ -160,6 +150,6 @@ public class Cpu implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.Cpu[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.Cpu[ id=" + id + " ]";
     }
 }

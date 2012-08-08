@@ -7,9 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -22,16 +22,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "particle_system_quality", catalog = "betabenchmark", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"name"})})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "ParticleSystemQuality.findAll", query = "SELECT p FROM ParticleSystemQuality p"),
-    @NamedQuery(name = "ParticleSystemQuality.findById", query = "SELECT p FROM ParticleSystemQuality p WHERE p.id = :id"),
-    @NamedQuery(name = "ParticleSystemQuality.findByName", query = "SELECT p FROM ParticleSystemQuality p WHERE p.name = :name")})
 public class ParticleSystemQuality implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(nullable = false)
     private Integer id;
     @Basic(optional = false)
@@ -40,7 +36,7 @@ public class ParticleSystemQuality implements Serializable {
     @Column(nullable = false, length = 255)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "particleSystemQuality", fetch = FetchType.LAZY)
-    private Collection<TestCase> testCaseCollection;
+    private Collection<TestCase> testCases;
 
     public ParticleSystemQuality() {
     }
@@ -71,12 +67,12 @@ public class ParticleSystemQuality implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TestCase> getTestCaseCollection() {
-        return testCaseCollection;
+    public Collection<TestCase> getTestCases() {
+        return testCases;
     }
 
-    public void setTestCaseCollection(Collection<TestCase> testCaseCollection) {
-        this.testCaseCollection = testCaseCollection;
+    public void setTestCases(Collection<TestCase> testCases) {
+        this.testCases = testCases;
     }
 
     @Override
@@ -101,6 +97,6 @@ public class ParticleSystemQuality implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.ParticleSystemQuality[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.ParticleSystemQuality[ id=" + id + " ]";
     }
 }

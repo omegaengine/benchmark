@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -21,11 +19,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "test_case_result", catalog = "betabenchmark", schema = "")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "TestCaseResult.findAll", query = "SELECT t FROM TestCaseResult t"),
-    @NamedQuery(name = "TestCaseResult.findById", query = "SELECT t FROM TestCaseResult t WHERE t.id = :id"),
-    @NamedQuery(name = "TestCaseResult.findByAverageFps", query = "SELECT t FROM TestCaseResult t WHERE t.averageFps = :averageFps"),
-    @NamedQuery(name = "TestCaseResult.findByAverageFrameMs", query = "SELECT t FROM TestCaseResult t WHERE t.averageFrameMs = :averageFrameMs")})
 public class TestCaseResult implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -146,6 +139,6 @@ public class TestCaseResult implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.TestCaseResult[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.TestCaseResult[ id=" + id + " ]";
     }
 }

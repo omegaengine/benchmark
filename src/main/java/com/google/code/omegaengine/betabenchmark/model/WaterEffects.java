@@ -7,9 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -22,16 +22,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "water_effects", catalog = "betabenchmark", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"name"})})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "WaterEffects.findAll", query = "SELECT w FROM WaterEffects w"),
-    @NamedQuery(name = "WaterEffects.findById", query = "SELECT w FROM WaterEffects w WHERE w.id = :id"),
-    @NamedQuery(name = "WaterEffects.findByName", query = "SELECT w FROM WaterEffects w WHERE w.name = :name")})
 public class WaterEffects implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(nullable = false)
     private Integer id;
     @Basic(optional = false)
@@ -40,7 +36,7 @@ public class WaterEffects implements Serializable {
     @Column(nullable = false, length = 255)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "waterEffects", fetch = FetchType.LAZY)
-    private Collection<TestCase> testCaseCollection;
+    private Collection<TestCase> testCases;
 
     public WaterEffects() {
     }
@@ -71,12 +67,12 @@ public class WaterEffects implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TestCase> getTestCaseCollection() {
-        return testCaseCollection;
+    public Collection<TestCase> getTestCases() {
+        return testCases;
     }
 
-    public void setTestCaseCollection(Collection<TestCase> testCaseCollection) {
-        this.testCaseCollection = testCaseCollection;
+    public void setTestCases(Collection<TestCase> testCases) {
+        this.testCases = testCases;
     }
 
     @Override
@@ -101,6 +97,6 @@ public class WaterEffects implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.WaterEffects[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.WaterEffects[ id=" + id + " ]";
     }
 }

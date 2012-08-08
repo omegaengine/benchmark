@@ -14,8 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,14 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "submission", catalog = "betabenchmark", schema = "")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Submission.findAll", query = "SELECT s FROM Submission s"),
-    @NamedQuery(name = "Submission.findById", query = "SELECT s FROM Submission s WHERE s.id = :id"),
-    @NamedQuery(name = "Submission.findBySubmissionTime", query = "SELECT s FROM Submission s WHERE s.submissionTime = :submissionTime"),
-    @NamedQuery(name = "Submission.findByUserName", query = "SELECT s FROM Submission s WHERE s.userName = :userName"),
-    @NamedQuery(name = "Submission.findByGameVersion", query = "SELECT s FROM Submission s WHERE s.gameVersion = :gameVersion"),
-    @NamedQuery(name = "Submission.findByEngineVersion", query = "SELECT s FROM Submission s WHERE s.engineVersion = :engineVersion"),
-    @NamedQuery(name = "Submission.findByRam", query = "SELECT s FROM Submission s WHERE s.ram = :ram")})
 public class Submission implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,21 +41,6 @@ public class Submission implements Serializable {
     private Date submissionTime;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 128)
-    @Column(name = "user_name", nullable = false, length = 128)
-    private String userName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 5)
-    @Column(name = "game_version", nullable = false, length = 5)
-    private String gameVersion;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 5)
-    @Column(name = "engine_version", nullable = false, length = 5)
-    private String engineVersion;
-    @Basic(optional = false)
-    @NotNull
     @Column(nullable = false)
     private int ram;
     @Lob
@@ -73,7 +48,7 @@ public class Submission implements Serializable {
     @Column(name = "game_log", length = 65535)
     private String gameLog;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "submission", fetch = FetchType.LAZY)
-    private Collection<TestCaseResult> testCaseResultCollection;
+    private Collection<TestCaseResult> testCaseResults;
     @JoinColumn(name = "gpu_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Gpu gpu;
@@ -83,6 +58,12 @@ public class Submission implements Serializable {
     @JoinColumn(name = "os_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Os os;
+    @JoinColumn(name = "game_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Game game;
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User user;
 
     public Submission() {
     }
@@ -91,12 +72,9 @@ public class Submission implements Serializable {
         this.id = id;
     }
 
-    public Submission(Integer id, Date submissionTime, String userName, String gameVersion, String engineVersion, int ram) {
+    public Submission(Integer id, Date submissionTime, int ram) {
         this.id = id;
         this.submissionTime = submissionTime;
-        this.userName = userName;
-        this.gameVersion = gameVersion;
-        this.engineVersion = engineVersion;
         this.ram = ram;
     }
 
@@ -116,30 +94,6 @@ public class Submission implements Serializable {
         this.submissionTime = submissionTime;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getGameVersion() {
-        return gameVersion;
-    }
-
-    public void setGameVersion(String gameVersion) {
-        this.gameVersion = gameVersion;
-    }
-
-    public String getEngineVersion() {
-        return engineVersion;
-    }
-
-    public void setEngineVersion(String engineVersion) {
-        this.engineVersion = engineVersion;
-    }
-
     public int getRam() {
         return ram;
     }
@@ -157,12 +111,12 @@ public class Submission implements Serializable {
     }
 
     @XmlTransient
-    public Collection<TestCaseResult> getTestCaseResultCollection() {
-        return testCaseResultCollection;
+    public Collection<TestCaseResult> getTestCaseResults() {
+        return testCaseResults;
     }
 
-    public void setTestCaseResultCollection(Collection<TestCaseResult> testCaseResultCollection) {
-        this.testCaseResultCollection = testCaseResultCollection;
+    public void setTestCaseResults(Collection<TestCaseResult> testCaseResults) {
+        this.testCaseResults = testCaseResults;
     }
 
     public Gpu getGpu() {
@@ -189,6 +143,22 @@ public class Submission implements Serializable {
         this.os = os;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -211,6 +181,6 @@ public class Submission implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.Submission[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.Submission[ id=" + id + " ]";
     }
 }

@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -21,10 +19,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
-@Table(name = "gpu", catalog = "betabenchmark", schema = "", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"manufacturer_id", "name", "ram", "max_aa"})})
+@Table(name = "user", catalog = "betabenchmark", schema = "", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"name"})})
 @XmlRootElement
-public class Gpu implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -37,32 +35,19 @@ public class Gpu implements Serializable {
     @Size(min = 1, max = 255)
     @Column(nullable = false, length = 255)
     private String name;
-    @Basic(optional = false)
-    @NotNull
-    @Column(nullable = false)
-    private int ram;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "max_aa", nullable = false)
-    private int maxAa;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gpu", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Collection<Submission> submissions;
-    @JoinColumn(name = "manufacturer_id", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private GpuManufacturer manufacturer;
 
-    public Gpu() {
+    public User() {
     }
 
-    public Gpu(Integer id) {
+    public User(Integer id) {
         this.id = id;
     }
 
-    public Gpu(Integer id, String name, int ram, int maxAa) {
+    public User(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.ram = ram;
-        this.maxAa = maxAa;
     }
 
     public Integer getId() {
@@ -81,22 +66,6 @@ public class Gpu implements Serializable {
         this.name = name;
     }
 
-    public int getRam() {
-        return ram;
-    }
-
-    public void setRam(int ram) {
-        this.ram = ram;
-    }
-
-    public int getMaxAa() {
-        return maxAa;
-    }
-
-    public void setMaxAa(int maxAa) {
-        this.maxAa = maxAa;
-    }
-
     @XmlTransient
     public Collection<Submission> getSubmissions() {
         return submissions;
@@ -104,14 +73,6 @@ public class Gpu implements Serializable {
 
     public void setSubmissions(Collection<Submission> submissions) {
         this.submissions = submissions;
-    }
-
-    public GpuManufacturer getManufacturer() {
-        return manufacturer;
-    }
-
-    public void setManufacturer(GpuManufacturer manufacturer) {
-        this.manufacturer = manufacturer;
     }
 
     @Override
@@ -124,10 +85,10 @@ public class Gpu implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Gpu)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        Gpu other = (Gpu) object;
+        User other = (User) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -136,6 +97,6 @@ public class Gpu implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.model.Gpu[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.User[ id=" + id + " ]";
     }
 }

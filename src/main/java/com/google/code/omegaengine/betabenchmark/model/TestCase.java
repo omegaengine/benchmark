@@ -12,8 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -26,15 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "test_case", catalog = "betabenchmark", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"target_name", "high_res", "anti_aliasing", "graphics_settings_anisotropic", "graphics_settings_double_sampling", "graphics_settings_post_screen_effects", "water_effects_id", "particle_system_quality_id"})})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "TestCase.findAll", query = "SELECT t FROM TestCase t"),
-    @NamedQuery(name = "TestCase.findById", query = "SELECT t FROM TestCase t WHERE t.id = :id"),
-    @NamedQuery(name = "TestCase.findByTargetName", query = "SELECT t FROM TestCase t WHERE t.targetName = :targetName"),
-    @NamedQuery(name = "TestCase.findByHighRes", query = "SELECT t FROM TestCase t WHERE t.highRes = :highRes"),
-    @NamedQuery(name = "TestCase.findByAntiAliasing", query = "SELECT t FROM TestCase t WHERE t.antiAliasing = :antiAliasing"),
-    @NamedQuery(name = "TestCase.findByGraphicsSettingsAnisotropic", query = "SELECT t FROM TestCase t WHERE t.graphicsSettingsAnisotropic = :graphicsSettingsAnisotropic"),
-    @NamedQuery(name = "TestCase.findByGraphicsSettingsDoubleSampling", query = "SELECT t FROM TestCase t WHERE t.graphicsSettingsDoubleSampling = :graphicsSettingsDoubleSampling"),
-    @NamedQuery(name = "TestCase.findByGraphicsSettingsPostScreenEffects", query = "SELECT t FROM TestCase t WHERE t.graphicsSettingsPostScreenEffects = :graphicsSettingsPostScreenEffects")})
 public class TestCase implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -197,6 +186,6 @@ public class TestCase implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.TestCase[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.TestCase[ id=" + id + " ]";
     }
 }

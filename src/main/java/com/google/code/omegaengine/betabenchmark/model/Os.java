@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -24,13 +22,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "os", catalog = "betabenchmark", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"platform", "is64bit", "version", "service_pack"})})
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Os.findAll", query = "SELECT o FROM Os o"),
-    @NamedQuery(name = "Os.findById", query = "SELECT o FROM Os o WHERE o.id = :id"),
-    @NamedQuery(name = "Os.findByPlatform", query = "SELECT o FROM Os o WHERE o.platform = :platform"),
-    @NamedQuery(name = "Os.findByIs64bit", query = "SELECT o FROM Os o WHERE o.is64bit = :is64bit"),
-    @NamedQuery(name = "Os.findByVersion", query = "SELECT o FROM Os o WHERE o.version = :version"),
-    @NamedQuery(name = "Os.findByServicePack", query = "SELECT o FROM Os o WHERE o.servicePack = :servicePack")})
 public class Os implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,7 +50,7 @@ public class Os implements Serializable {
     @Column(name = "service_pack", nullable = false, length = 255)
     private String servicePack;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "os", fetch = FetchType.LAZY)
-    private Collection<Submission> submissionCollection;
+    private Collection<Submission> submissions;
 
     public Os() {
     }
@@ -117,12 +108,12 @@ public class Os implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Submission> getSubmissionCollection() {
-        return submissionCollection;
+    public Collection<Submission> getSubmissions() {
+        return submissions;
     }
 
-    public void setSubmissionCollection(Collection<Submission> submissionCollection) {
-        this.submissionCollection = submissionCollection;
+    public void setSubmissions(Collection<Submission> submissions) {
+        this.submissions = submissions;
     }
 
     @Override
@@ -147,6 +138,6 @@ public class Os implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.Os[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.Os[ id=" + id + " ]";
     }
 }

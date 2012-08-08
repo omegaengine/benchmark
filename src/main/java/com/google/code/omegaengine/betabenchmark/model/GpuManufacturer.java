@@ -8,8 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -20,10 +18,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "gpu_manufacturer", catalog = "betabenchmark", schema = "")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "GpuManufacturer.findAll", query = "SELECT g FROM GpuManufacturer g"),
-    @NamedQuery(name = "GpuManufacturer.findById", query = "SELECT g FROM GpuManufacturer g WHERE g.id = :id"),
-    @NamedQuery(name = "GpuManufacturer.findByName", query = "SELECT g FROM GpuManufacturer g WHERE g.name = :name")})
 public class GpuManufacturer implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -38,7 +32,7 @@ public class GpuManufacturer implements Serializable {
     @Column(nullable = false, length = 255)
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "manufacturer", fetch = FetchType.LAZY)
-    private Collection<Gpu> gpuCollection;
+    private Collection<Gpu> gpus;
 
     public GpuManufacturer() {
     }
@@ -69,12 +63,12 @@ public class GpuManufacturer implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Gpu> getGpuCollection() {
-        return gpuCollection;
+    public Collection<Gpu> getGpus() {
+        return gpus;
     }
 
-    public void setGpuCollection(Collection<Gpu> gpuCollection) {
-        this.gpuCollection = gpuCollection;
+    public void setGpus(Collection<Gpu> gpus) {
+        this.gpus = gpus;
     }
 
     @Override
@@ -99,6 +93,6 @@ public class GpuManufacturer implements Serializable {
 
     @Override
     public String toString() {
-        return "com.google.code.omegaengine.betabenchmark.controller.exceptions.GpuManufacturer[ id=" + id + " ]";
+        return "com.google.code.omegaengine.betabenchmark.model.GpuManufacturer[ id=" + id + " ]";
     }
 }
