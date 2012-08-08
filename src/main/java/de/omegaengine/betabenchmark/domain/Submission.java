@@ -1,4 +1,4 @@
-package com.google.code.omegaengine.betabenchmark.model;
+package de.omegaengine.betabenchmark.domain;
 
 import java.io.Serializable;
 import java.util.Collection;
