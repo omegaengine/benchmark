@@ -1,9 +1,0 @@
-Die Ergebnisse eines Benchmark-Durchlaufs werden als ZIP-Datei abgespeichert.
-Jede solche ZIP-Datei enthält eine Datei namens "hardware.xml", welche Daten über Betriebssystem, CPU, GPU und RAM des Rechners der den Benchmark durchgeführt hat enthält.
-Außerdem gibt es eine Datei namens "statistics.xml", welche für mehre Testszenen die vom Benchmark gerendert werden Informationen über die verwendeten Grafikeinstellung sowie die resultierende Performance (Frames pro Sekunde) enthält.
-Für jeden Eintrag in "statistics.xml" existiert eine durchnummerierte Datei namens "test-case{ZAHL}.xml" (z.B. "test-case17.xml"). Der Inhalt dieser Dateien braucht nicht geparst zu werden, sondern sollte lediglich für Debug-Zwecke abgespeichert und verfügbar gemacht werden.
-Für manche der Testszenen existieren zusätzlich "test-case{ZAHL}.jpg" benannte Screenshot Dateien.
-Zu guter Letzt liegt in jeder solchen ZIP-Datei auch eine "log.txt", die wieder nur für Debug-Zwecke gespeichert und nicht geparst werden muss.
-
-Das Format der "hardware.xml" und "statistics.xml" Dateien ist in den Dateien "hardware.xsd" und "statistics.xsd" beschrieben.
-Die Datei "database.sql" beschreibt die Struktur einer Datenbank zur Server-seitigen Speicherung der Daten mitsamt Kommentaren.

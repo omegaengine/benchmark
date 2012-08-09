@@ -101,7 +101,7 @@ CREATE TABLE test_case
 	anti_aliasing BOOLEAN NOT NULL, -- was the scene rendered with anti aliasing?
 	graphics_settings_anisotropic BOOLEAN NOT NULL, -- was anisotropic filtering on?
 	graphics_settings_double_sampling BOOLEAN NOT NULL, -- was double sampling on?
-	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on on?
+	graphics_settings_post_screen_effects BOOLEAN NOT NULL, -- were post-screen effects on?
 	water_effects_id INT UNSIGNED NOT NULL,
 	particle_system_quality_id INT UNSIGNED NOT NULL,
 	CONSTRAINT deduplicate UNIQUE (target_name, high_res, anti_aliasing, graphics_settings_anisotropic, graphics_settings_double_sampling, graphics_settings_post_screen_effects, water_effects_id, particle_system_quality_id),
