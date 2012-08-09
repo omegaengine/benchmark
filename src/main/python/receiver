@@ -7,4 +7,4 @@ def db_connect():
 
 # Parse and store data specified via command-line
 import sys, submission
-submission.store(submission.parse(game_name=sys.argv[1], user_name=sys.argv[2], stream=open(sys.argv[3], 'rb')), db_connect())
+submission.store(submission.parse(user_name=sys.argv[1], game_name=sys.argv[2], stream=open(sys.argv[3], 'rb')), db_connect())

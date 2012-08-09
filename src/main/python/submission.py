@@ -7,10 +7,10 @@ class Data:
 	pass
 
 
-def parse(game_name, user_name, stream):
+def parse(user_name, game_name, stream):
 	"""Parses a ZIP archive as a benchmark submission.
-	@param game_name: the name of the game that generated the data
 	@param user_name: the name of the user that submitted the data
+	@param game_name: the name of the game that generated the data
 	@param stream: a file-like object containing the ZIP data
 	@return: the parsed benchmark data structure"""
 	def parse_hardware(zip):
