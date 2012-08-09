@@ -12,8 +12,8 @@ CREATE TABLE game
 (
 	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
-	version VARCHAR(5) NOT NULL, -- version number of the game, e.g. 1.0.0
-	engine_version VARCHAR(5) NOT NULL, -- version number of the engine, e.g. 1.0.0
+	version VARCHAR(64) NOT NULL, -- version number of the game, e.g. 1.0.0
+	engine_version VARCHAR(64) NOT NULL, -- version number of the engine, e.g. 1.0.0
 	CONSTRAINT deduplicate UNIQUE (name, version, engine_version)
 ) CHARSET=utf8 ENGINE=InnoDB;
 
