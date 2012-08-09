@@ -17,7 +17,12 @@ def application(environ, start_response):
 		# Send HTTP response
 		start_response('200 OK', [('Content-Type', 'text/html')])
 		return ["OK"]
-	except:
+
+	except Exception as ex:
+		# Log complete stacktrace
+		import traceback
+		traceback.print_exc(file=environ['wsgi.errors'])
+
 		# Send HTTP response
 		start_response('400 Bad Request', [('Content-Type', 'text/html')])
-		return ["Error"]
+		return ["Error: ", str(ex)]
