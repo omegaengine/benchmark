@@ -155,6 +155,8 @@ def store(submission, db):
 			result = add(cursor, table, dict) # Try to add new
 			if result is None:
 				result = get(cursor, table, dict) # Handle race condition
+				if result is None:
+					raise Exception("Failed to insert into table '%s'" % table)
 		return result
 
 	cursor = db.cursor()
