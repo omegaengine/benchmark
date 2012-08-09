@@ -2,15 +2,15 @@
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
     <persistence-unit name="betabenchmark" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>com.google.code.omegaengine.betabenchmark.model.Cpu</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.Gpu</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.GpuManufacturer</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.Os</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.ParticleSystemQuality</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.Submission</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.TestCase</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.TestCaseResult</class>
-        <class>com.google.code.omegaengine.betabenchmark.model.WaterEffects</class>
+        <class>de.omegaengine.betabenchmark.model.Cpu</class>
+        <class>de.omegaengine.betabenchmark.model.Gpu</class>
+        <class>de.omegaengine.betabenchmark.model.GpuManufacturer</class>
+        <class>de.omegaengine.betabenchmark.model.Os</class>
+        <class>de.omegaengine.betabenchmark.model.ParticleSystemQuality</class>
+        <class>de.omegaengine.betabenchmark.model.Submission</class>
+        <class>de.omegaengine.betabenchmark.model.TestCase</class>
+        <class>de.omegaengine.betabenchmark.model.TestCaseResult</class>
+        <class>de.omegaengine.betabenchmark.model.WaterEffects</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
