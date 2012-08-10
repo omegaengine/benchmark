@@ -8,13 +8,14 @@
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
+    
+    <!-- servlet mappings -->
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/*</url-pattern>
+        <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-    
+
     <!-- context listeners -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -26,6 +27,10 @@
         <param-value>Development</param-value>
     </context-param>
     <context-param>
+        <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+        <param-value>1</param-value>
+    </context-param>
+    <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/spring/*-context.xml</param-value>
     </context-param>
@@ -35,6 +40,6 @@
         <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>faces/index.xhtml</welcome-file>
+        <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>
