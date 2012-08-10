@@ -37,12 +37,12 @@ public class Game implements Serializable {
     private String name;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
+    @Size(min = 1, max = 64)
     @Column(nullable = false, length = 5)
     private String version;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 5)
+    @Size(min = 1, max = 64)
     @Column(name = "engine_version", nullable = false, length = 5)
     private String engineVersion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "game", fetch = FetchType.LAZY)
