@@ -5,6 +5,7 @@ def db_connect():
 	#Configuration:        Host,        Username,        Password,        Database
 	return MySQLdb.connect('localhost', 'betabenchmark', 'betabenchmark', 'betabenchmark')
 
-# Parse and store data specified via command-line
-import sys, submission
-submission.store(submission.parse(user_name=sys.argv[1], game_name=sys.argv[2], stream=open(sys.argv[3], 'rb')), db_connect())
+if __name__ == "__main__":
+	# Parse and store data specified via command-line
+	import sys, submission
+	submission.store(submission.parse(user_name=sys.argv[1], game_name=sys.argv[2], stream=open(sys.argv[3], 'rb')), db_connect())
